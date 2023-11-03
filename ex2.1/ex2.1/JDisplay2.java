@@ -2,8 +2,9 @@ public class JDisplay2 implements HighLevelDisplay {
 
     private JDisplay d;
     private String [] text;
-    private  int usedRows;
 
+	// total number of rows in display
+    private  int usedRows;
     public JDisplay2(){
 	d = new JDisplay();
 	text = new String [100];
@@ -41,20 +42,22 @@ public class JDisplay2 implements HighLevelDisplay {
 	usedRows = 0;
     }
 
-    public void addRow(String str) {
+    public synchronized void addRow(String str) {
 	updateRow(usedRows,str);
 	flashRow(usedRows,1000);
 	usedRows++;
     }
 
-    public void deleteRow(int row) {
+    public synchronized void deleteRow(int row) {
 	if (row < usedRows) {
+		// move rows after position "row" up
 	    for(int i = row+1; i < usedRows; i++)
-		updateRow(i-1,text[i]);
+			updateRow(i-1,text[i]);
 	    usedRows--;
 	    updateRow(usedRows,"");
+		// at most d.getRows()
 	    if(usedRows >= d.getRows())
-		flashRow(d.getRows()-1,1000);
+			flashRow(d.getRows()-1,1000);
 	}
     }
 
